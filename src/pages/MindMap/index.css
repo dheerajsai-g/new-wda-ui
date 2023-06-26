@@ -1,0 +1,230 @@
+.dndflow {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+  width: 100%
+}
+
+.dndflow aside {
+  border-right: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #fcfcfc;
+}
+
+.dndflow aside .description {
+  margin-bottom: 10px;
+}
+
+.dndflow .dndnode {
+  border: 1px solid #1a192b;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.dndflow .dndnode.components {
+  border-radius: 10px;
+  height: 50px;
+}
+
+.dndflow .dndnode.auth {
+  border-radius: 50px;
+  height: 50px;
+}
+
+.dndflow .dndnode.database {
+  border-radius: 50px;
+  height: 130px;
+}
+
+.dndflow .dndnode.outputs {
+  border-color: #ff0072;
+}
+
+.dndflow .reactflow-wrapper {
+  flex-grow: 1;
+  /* height: 100%; */
+}
+
+.dndflow .selectall {
+  margin-top: 10px;
+}
+
+@media screen and (min-width: 768px) {
+  .dndflow {
+    flex-direction: row;
+  }
+
+  .dndflow aside {
+    width: 20%;
+    max-width: 250px;
+  }
+}
+
+
+.react-flow__node {
+  font-size: 12px;
+  background: #fff;
+  border: 1px solid;
+  border-radius: 5px;
+  text-align: center;
+  padding: 10px;
+}
+
+.react-flow__node-componentNode.client {
+  background-color: #ff000040;
+  border-color: #ff0000;
+  border-radius: 10px;
+}
+
+.react-flow__node-authenticationNode {
+  background-color: #b1b1b103;
+    border-color: #b1b1b1;
+    border-radius: 10px;
+    height: 60px;
+    width: 112px;
+    padding: 0px;
+}
+
+.react-flow__node-serviceDiscoveryNode {
+  background-color: #0aff8003;
+  border-color: #6fb33e;
+  border-radius: 50px;
+  height: 80px;
+  width: 100px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.react-flow__node-logManagementNode {
+  background-color: #0aff8003;
+  border-color: #f2cf33;
+  border-radius: 50px;
+  height: 80px;
+  width: 100px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.react-flow__node-componentNode.server {
+  background-color: #0041d040;
+  border-color: #0041d0;
+  border-radius: 10px;
+}
+
+.react-flow__node-databaseNode {
+  border-radius: 30px;
+}
+
+.react-flow__handle-left.target {
+  border-radius: 0;
+  height: 10px;
+}
+
+.react-flow__node.highlight {
+  background-color: #ff0072;
+  color: white;
+}
+
+.intersection-flow .react-flow__node {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  border-radius: 1px;
+  border-width: 2px;
+  box-shadow: 6px 6px 0 1px rgba(0, 0, 0, 0.7);
+}
+
+.intersection-flow .react-flow__node.selected,
+.intersection-flow .react-flow__node:hover,
+.intersection-flow .react-flow__node:focus {
+  box-shadow: 6px 6px 0 1px rgba(0, 0, 0, 0.7);
+  background-color: #eee;
+}
+
+.intersection-flow .react-flow__handle {
+  display: none;
+}
+
+
+
+
+.communicationbutton {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  height: 20px;
+  background: #eee;
+  border: 1px solid #000000;
+  border-radius: 10%;
+  font-size: 7px;
+}
+
+.communicationbutton:hover {
+  box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.18);
+}
+
+
+
+
+
+
+.react-flow__panel.top.right {
+  width: 300px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.react-flow__panel .pannel-button {
+  border: none;
+  background: #fefefe;
+  border-bottom: 1px solid #b1b1b1;
+  box-sizing: content-box;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: baseline;
+  width: 100px;
+  height: 16px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: 5px;
+  flex-direction: row-reverse;
+  flex-wrap: nowrap;
+  align-content: stretch;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.react-flow__handle-connecting {
+  background: #ff6060;
+}
+
+.react-flow__handle-valid {
+  background: #55dd99;
+}
