@@ -1,10 +1,4 @@
 import React, { memo, useEffect } from "react";
-import { Handle, Position } from "reactflow";
-import eureka from "../../../assets/eureka.jpg";
-
-const serviceDiscoveryTypes = {
-  eureka: eureka,
-};
 
 export default memo(({ data, isConnectable }) => {
   useEffect(() => {
@@ -14,25 +8,36 @@ export default memo(({ data, isConnectable }) => {
       console.log("Component unmounted");
     };
   }, []);
-  return (
-    <>
-      <img
-        id={data.target_id}
-        style={{
-          padding: "0px",
-          display: "flex",
-          justifyContent: "center",
-          overflow: "hidden",
-          width: "70px",
-        }}
-        src={serviceDiscoveryTypes[data.target_id]}
-      />
-      <Handle
-        type="target"
-        position={Position.Left}
-        id="client"
-        isConnectable={isConnectable}
-      />
-    </>
-  );
+
+  if (data.target_id === "eureka") {
+    return (
+      <legend>
+        <a
+          style={{
+            fontSize: "5px",
+            padding: "0px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          eureka
+        </a>
+      </legend>
+    );
+  } else {
+    return (
+      <legend>
+        <a
+          style={{
+            fontSize: "5px",
+            padding: "0px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          in future
+        </a>
+      </legend>
+    );
+  }
 });

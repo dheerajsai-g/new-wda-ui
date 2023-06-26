@@ -291,6 +291,42 @@ const MindMap = () => {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
+  function addParentNodev2(parentNodeId, newNode, nodeHeight, nodeX) {
+    const filteredNodes = nodes.filter((node) =>
+      Object.keys(components).includes(node.id)
+    );
+
+    const filteredSubNodes = nodes.filter((node) =>
+      node.parentNode
+    );
+
+    if (filteredSubNodes.length > 0) {
+      const unfilteredSubNodes = nodes.filter((node) => !node.parentNode);
+      
+    }
+
+    const unfilteredNodes = nodes.filter((node) =>
+      !Object.keys(components).includes(node.id)
+    );
+
+    const newNodeHeight = filteredNodes.length;
+
+    const updatedNodes = filteredNodes.map((node, idx) => {
+      node.parentNode = parentNodeId;
+      node.extent = "parent";
+      node.position.x = nodeX;
+      node.position.y = nodeX * (idx + 1) + 50 * idx;
+      console.log(node.position.y);
+      return node;
+    });
+
+    newNode.style = {
+      height: newNodeHeight * nodeHeight,
+    };
+
+    setNodes([...unfilteredNodes, ...updatedNodes, newNode]);
+  }
+
   function addParentNode(addedNodes, parentNodeId, parentNodeHandle, type) {
     const edgeColor = parentEdgeColorTypes[type];
     addedNodes.forEach((target) => {
@@ -321,9 +357,6 @@ const MindMap = () => {
       setEdges((eds) => addEdge(params, eds));
     });
   }
-
-
-  
 
   function addServiceDiscovery(nodesList, parentNode, distance) {
     let updatedNodes = [];
@@ -390,12 +423,13 @@ const MindMap = () => {
         if (authNode) return;
         // addParentNode(Object.keys(components), nodeId, target_id, type);
         // setAuthNode(true);
-        addServiceDiscovery(nodes, newNode, 10);
-        return
+        addParentNodev2(nodeId, newNode, 60, 10);
+        return;
       } else if (type === "serviceDiscoveryNode") {
         if (serviceNode) return;
-        addParentNode(Object.keys(components), nodeId, target_id, type);
-        setServiceNode(true);
+        addParentNodev2(nodeId, newNode, 80, 20);
+        // addParentNode(Object.keys(components), nodeId, target_id, type);
+        // setServiceNode(true);
       } else if (type === "logManagementNode") {
         if (logNode) return;
         addParentNode(Object.keys(components), nodeId, target_id, type);
@@ -452,10 +486,7 @@ const MindMap = () => {
           />
           <Controls />
           <Panel position="top-right">
-            <button
-              className="pannel-button"
-              onClick={() => onLayout("LR")}
-            >
+            <button className="pannel-button" onClick={() => onLayout("LR")}>
               Format layout
             </button>
             <button

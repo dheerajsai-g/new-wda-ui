@@ -83,23 +83,21 @@
 
 .react-flow__node-authenticationNode {
   background-color: #b1b1b103;
-    border-color: #b1b1b1;
-    border-radius: 10px;
-    height: 60px;
-    width: 112px;
-    padding: 0px;
+  border-color: #b1b1b1;
+  border-radius: 10px;
+  height: 60px;
+  width: 112px;
+  padding: 0px;
+  cursor: grab;
 }
 
 .react-flow__node-serviceDiscoveryNode {
   background-color: #0aff8003;
   border-color: #6fb33e;
-  border-radius: 50px;
+  border-radius: 10px;
   height: 80px;
-  width: 100px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 132px;
+  padding: 0px;
   cursor: grab;
 }
 

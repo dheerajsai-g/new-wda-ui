@@ -4,7 +4,7 @@ import { Container, Box, Stack } from "@mui/material";
 
 export default memo(({ data, isConnectable }) => {
   return (
-    // <fieldset>
+    <div>
     <legend>
       <a
         style={{
@@ -17,6 +17,6 @@ export default memo(({ data, isConnectable }) => {
         Authentication
       </a>
     </legend>
-    // </fieldset>
+    </div>
   );
 });
