@@ -81,23 +81,39 @@
   border-radius: 10px;
 }
 
+.react-flow__node-microserviceServiceGroupNode {
+  background-color: #0aff8003;
+  border-color: #6fb33e;
+  border-radius: 10px;
+  min-height: 120px;
+  width: 200px;
+  padding: 0px;
+  cursor: grab;
+}
+
 .react-flow__node-authenticationNode {
   background-color: #b1b1b103;
   border-color: #b1b1b1;
-  border-radius: 10px;
+  border-radius: 50px;
   height: 60px;
-  width: 112px;
-  padding: 0px;
+  width: 92px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: grab;
 }
 
 .react-flow__node-serviceDiscoveryNode {
   background-color: #0aff8003;
   border-color: #6fb33e;
-  border-radius: 10px;
-  height: 80px;
-  width: 132px;
-  padding: 0px;
+  border-radius: 50px;
+  height: 60px;
+  width: 92px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: grab;
 }
 
@@ -105,8 +121,8 @@
   background-color: #0aff8003;
   border-color: #f2cf33;
   border-radius: 50px;
-  height: 80px;
-  width: 100px;
+  height: 60px;
+  width: 92px;
   overflow: hidden;
   display: flex;
   justify-content: center;

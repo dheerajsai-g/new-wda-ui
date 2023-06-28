@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   MouseEvent,
+  ReactDOM,
 } from "react";
 import ReactFlow, {
   ConnectionLineType,
@@ -18,6 +19,7 @@ import ReactFlow, {
   MarkerType,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import DialogBox from "./util/AlertCheckBox";
 
 import ColorSelectorNode from "./CustomNodes/ColorSelectorNode";
 import ClientNode from "./CustomNodes/ClientNode";
@@ -31,6 +33,7 @@ import AuthenticationNode from "./CustomNodes/AuthenticationNode";
 import ServiceDiscoveryNode from "./CustomNodes/ServiceDiscoveryNode";
 import LogManagementNode from "./CustomNodes/LogManagementNode";
 import ComponentNode from "./CustomNodes/ComponentNode";
+import MicroserviceServiceGroupNode from "./CustomNodes/MicroserviceServiceGroupNode";
 
 import CommunicationEdge from "./CustomEdges/CommunicationEdge";
 import SelfConnecting from "./CustomEdges/SelfConnectingEdge";
@@ -50,6 +53,7 @@ const nodeTypes = {
   databaseNode: DatabaseNode,
   serviceDiscoveryNode: ServiceDiscoveryNode,
   logManagementNode: LogManagementNode,
+  microserviceServiceGroupNode: MicroserviceServiceGroupNode,
 };
 
 const edgeTypes = {
@@ -77,7 +81,9 @@ const getLayoutedElements = (nodes, edges, direction = "TB") => {
   dagreGraph.setGraph({ rankdir: direction });
 
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+    if (!node.parentNode) {
+      dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+    }
   });
 
   edges.forEach((edge) => {
@@ -96,13 +102,8 @@ const getLayoutedElements = (nodes, edges, direction = "TB") => {
     const nodeWithPosition = dagreGraph.node(node.id);
     node.data.targetPosition = isHorizontal ? "left" : "top";
     node.data.sourcePosition = isHorizontal ? "right" : "bottom";
-    // We are shifting the dagre node position (anchor=center center) to the top left
-    // so it matches the React Flow node anchor point (top left).
+
     if (node.parentNode) {
-      node.position = {
-        x: 10,
-        y: 10,
-      };
       return node;
     }
     node.position = {
@@ -119,16 +120,27 @@ const getLayoutedElements = (nodes, edges, direction = "TB") => {
 const MindMap = () => {
   const store = useStoreApi();
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(example.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(example.edges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [bgColor, setBgColor] = useState(initBgColor);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [components, setComponents] = useState({});
   const { getIntersectingNodes } = useReactFlow();
 
+  const [metaData, setMetaData] = useState({
+    nodes: {},
+    edges: {},
+  });
+
   const [authNode, setAuthNode] = useState(false);
   const [serviceNode, setServiceNode] = useState(false);
   const [logNode, setLogNode] = useState(false);
+
+  const [groupsList, setGroupsList] = useState({});
+
+  const [testtt, setTesttt] = useState({
+    count: 0,
+  });
 
   const onConnect = useCallback((params) => {
     if (
@@ -140,29 +152,34 @@ const MindMap = () => {
         type: MarkerType.ArrowClosed,
         width: 10,
         height: 10,
-        color: "#121213",
       };
       params.markerEnd = {
         type: MarkerType.ArrowClosed,
         width: 10,
         height: 10,
-        color: "#121213",
       };
       params.style = {
         strokeWidth: 2,
-        stroke: "#121213",
       };
-    } else {
+    } else if (params.target == params.source) {
       params.type = "selfConnecting";
       params.markerEnd = {
         type: MarkerType.ArrowClosed,
         width: 10,
         height: 10,
-        color: "#121213",
       };
       params.style = {
         strokeWidth: 2,
-        stroke: "#121213",
+      };
+    } else {
+      params.type = "smoothstep";
+      params.markerEnd = {
+        type: MarkerType.ArrowClosed,
+        width: 10,
+        height: 10,
+      };
+      params.style = {
+        strokeWidth: 2,
       };
     }
     setEdges((eds) => addEdge(params, eds));
@@ -296,17 +313,14 @@ const MindMap = () => {
       Object.keys(components).includes(node.id)
     );
 
-    const filteredSubNodes = nodes.filter((node) =>
-      node.parentNode
-    );
+    const filteredSubNodes = nodes.filter((node) => node.parentNode);
 
     if (filteredSubNodes.length > 0) {
       const unfilteredSubNodes = nodes.filter((node) => !node.parentNode);
-      
     }
 
-    const unfilteredNodes = nodes.filter((node) =>
-      !Object.keys(components).includes(node.id)
+    const unfilteredNodes = nodes.filter(
+      (node) => !Object.keys(components).includes(node.id)
     );
 
     const newNodeHeight = filteredNodes.length;
@@ -325,6 +339,119 @@ const MindMap = () => {
     };
 
     setNodes([...unfilteredNodes, ...updatedNodes, newNode]);
+  }
+
+  function addParentNodev3(newNode, componentsList) {
+    const filteredNodes = nodes.filter((node) =>
+      componentsList.includes(node.id)
+    );
+
+    const newNodes = [];
+
+    const updatedHeight = [];
+
+    const unfilteredNodes = nodes.filter(
+      (node) => !componentsList.includes(node.id)
+    );
+
+    let params = {};
+
+    const updatedNodes = filteredNodes.map((node) => {
+      node.data.functionalities = {
+        ...node.data.functionalities,
+        ...newNode.data.functionalities,
+      };
+      const groupName = Object.keys(node.data.functionalities).join("_");
+      console.log(
+        stringifiedGroupName,
+        "234g34dtwrfw3tf",
+        node.data.functionalities
+      );
+      if (Object.keys(groupsList).includes(groupName)) {
+        if (groupsList[groupName].nodesList.includes(node.id)) return node;
+        node.position.y =
+          groupsList[groupName].nodesList.length * 60 -
+          10 * (groupsList[groupName].nodesList.length - 1);
+        node.position.x = 10;
+        node.parentNode = groupsList[groupName].name;
+        node.extent = "parent";
+        groupsList[groupName].nodesList.push(node.id);
+
+        groupsList[groupName].height =
+          groupsList[groupName].nodesList.length * 40 +
+          (groupsList[groupName].nodesList.length + 1) * 10;
+        updatedHeight[groupsList[groupName].name] =
+          groupsList[groupName].height;
+      } else {
+        groupsList[groupName] = {
+          name: newNode.id,
+          nodesList: [node.id],
+        };
+        groupsList[groupName].height = 60;
+        node.parentNode = groupsList[groupName].name;
+        node.position.y = 10;
+        node.position.x = 10;
+        node.extent = "parent";
+        const newNodeTest = { ...newNode };
+        newNodeTest.id = generateRandomId();
+        newNodeTest.type = newNode.type;
+        newNodeTest.position = {
+          x: newNode.position.x + 300,
+          y: newNode.position.y,
+        };
+        newNode.data = {
+          ...newNode.data,
+          label: stringifiedGroupName,
+        };
+        newNode.type = "microserviceServiceGroupNode";
+        newNodes.push(newNode);
+        newNodes.push(newNodeTest);
+
+        params = {
+          source: newNode.id,
+          target: newNodeTest.id,
+          type: "smoothstep",
+        };
+      }
+      setGroupsList({ ...groupsList });
+      return node;
+    });
+
+    let finalNodes = [];
+
+    if (newNodes.length !== 0) {
+      finalNodes = [...newNodes, ...unfilteredNodes, ...updatedNodes];
+    } else {
+      finalNodes = [...unfilteredNodes, ...updatedNodes];
+    }
+
+    const parentNodes = [];
+
+    finalNodes.reverse().forEach((node) => {
+      if (Object.keys(updatedHeight).includes(node.id)) {
+        node.style = {
+          height: updatedHeight[node.id],
+        };
+      }
+
+      if (
+        node.type === "componentNode" &&
+        node.parentNode &&
+        !parentNodes.includes(node.parentNode)
+      ) {
+        parentNodes.push(node.parentNode);
+      }
+    });
+
+    //     const cleanedNodes = finalNodes.filter((node) => {
+    // return !(node.type === "microserviceServiceGroupNode" && !parentNodes.includes(node.id));
+    //     });
+
+    setNodes([...finalNodes]);
+
+    if (Object.keys(params).length > 0) {
+      setEdges((eds) => addEdge(params, eds));
+    }
   }
 
   function addParentNode(addedNodes, parentNodeId, parentNodeHandle, type) {
@@ -392,6 +519,14 @@ const MindMap = () => {
     setNodes([...newList]);
   }
 
+  const [popup, setPopup] = useState(false);
+  const [tempNode, setTempNode] = useState({});
+
+  function onSubmit(componentsList) {
+    addParentNodev3(tempNode, componentsList);
+    setPopup(false);
+  }
+
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -416,28 +551,49 @@ const MindMap = () => {
         className: target_id,
         type,
         position,
-        data: { label: `${type} node`, target_id: target_id },
+        data: {
+          label: "",
+          target_id: target_id,
+          functionalities: {},
+        },
       };
+
+      if (!metaData.nodes[type]) {
+        metaData.nodes[type] = {
+          [nodeId]: newNode,
+        };
+      } else {
+        metaData.nodes[type][nodeId] = newNode;
+      }
+      setMetaData({ ...metaData });
 
       if (type === "authenticationNode") {
         if (authNode) return;
-        // addParentNode(Object.keys(components), nodeId, target_id, type);
-        // setAuthNode(true);
-        addParentNodev2(nodeId, newNode, 60, 10);
-        return;
+        newNode.type = "authenticationNode";
+        newNode.data.functionalities = { Authentication: true };
+        setTempNode(() => newNode);
+        setPopup(true);
       } else if (type === "serviceDiscoveryNode") {
         if (serviceNode) return;
-        addParentNodev2(nodeId, newNode, 80, 20);
+        // addParentNodev2(nodeId, newNode, 80, 20);
         // addParentNode(Object.keys(components), nodeId, target_id, type);
         // setServiceNode(true);
+        newNode.type = "serviceDiscoveryNode";
+        newNode.data.functionalities = { ServiceDiscovery: true };
+        setTempNode(() => newNode);
+        setPopup(true);
       } else if (type === "logManagementNode") {
         if (logNode) return;
-        addParentNode(Object.keys(components), nodeId, target_id, type);
-        setLogNode(true);
+        // addParentNode(Object.keys(components), nodeId, target_id, type);
+        // setLogNode(true);
+        newNode.type = "logManagementNode";
+        newNode.data.functionalities = { LogManagement: true };
+        setTempNode(() => newNode);
+        setPopup(true);
       } else {
         setComponents({ ...components, ...{ [nodeId]: target_id } });
+        setNodes((nds) => nds.concat(newNode));
       }
-      setNodes((nds) => nds.concat(newNode));
     },
     [
       reactFlowInstance,
@@ -491,14 +647,31 @@ const MindMap = () => {
             </button>
             <button
               className="pannel-button"
-              onClick={() => console.log(edges, nodes, components)}
+              onClick={() => console.log(edges, nodes, metaData)}
             >
               Print Layout
+            </button>
+            <button
+              className="pannel-button"
+              onClick={() =>
+                setTesttt((testtt) => ({ count: testtt.count + 1 }))
+              }
+            >
+              Append
             </button>
           </Panel>
         </ReactFlow>
       </div>
       <Sidebar />
+      {!popup ? (
+        <></>
+      ) : (
+        <DialogBox
+          options={Object.keys(components)}
+          open={popup}
+          onSubmit={onSubmit}
+        ></DialogBox>
+      )}
     </div>
   );
 };

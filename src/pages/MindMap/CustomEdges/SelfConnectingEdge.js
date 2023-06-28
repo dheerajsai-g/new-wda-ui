@@ -12,11 +12,6 @@ export default function SelfConnecting({ props }) {
     };
   }, []);
 
-  if (props.source !== props.target) {
-    console.log("Awdawdawdadwawd");
-    return <SmoothStepEdge {...props} />;
-  }
-
   const { sourceX, sourceY, targetX, targetY, id, markerEnd } = props;
   const radiusX = (sourceX - targetX) * 0.6;
   const radiusY = 50;
